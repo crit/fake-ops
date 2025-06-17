@@ -1,0 +1,27 @@
+# GET /users 200 application/json
+{
+  "status": "SUCCESS",
+  "message": "Users retrieved successfully.",
+  "data": {
+    "users": [
+      {
+        "id": "1",
+        "name": "Alice Johnson",
+        "email": "alice.johnson@example.com",
+        "role": "admin"
+      },
+      {
+        "id": "2",
+        "name": "Bob Smith",
+        "email": "bob.smith@example.com",
+        "role": "editor"
+      },
+      {
+        "id": "3",
+        "name": "Charlie Brown",
+        "email": "charlie.brown@example.com",
+        "role": "viewer"
+      }
+    ]
+  }
+}

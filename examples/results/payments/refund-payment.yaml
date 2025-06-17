@@ -1,0 +1,12 @@
+# POST /payments/:id/refund 201 application/json
+{
+  "status": "SUCCESS",
+  "message": "Payment refund process started.",
+  "data": {
+    "paymentId": "pay_987654321",
+    "amount": 100.50,
+    "currency": "USD",
+    "status": "Pending",
+    "createdAt": "2024-01-13T12:30:45Z"
+  }
+}

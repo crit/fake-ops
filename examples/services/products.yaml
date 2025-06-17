@@ -1,0 +1,4 @@
+name: products
+type: http
+port: 3002
+skip: true

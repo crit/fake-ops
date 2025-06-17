@@ -1,0 +1,4 @@
+name: static
+type: http
+port: 3003
+skip: false

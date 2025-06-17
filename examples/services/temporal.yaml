@@ -1,0 +1,7 @@
+name: temporal
+type: app
+port: 7233
+exec: temporal server start-dev --port {port}
+stdout: false
+stderr: false
+skip: false

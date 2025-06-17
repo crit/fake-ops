@@ -1,0 +1,13 @@
+# GET /payments/:id 200 application/json
+{
+  "status": "SUCCESS",
+  "message": "Payment details retrieved successfully.",
+  "data": {
+    "paymentId": "pay_987654321",
+    "amount": 100.50,
+    "currency": "USD",
+    "status": "Completed",
+    "createdAt": "2024-01-13T12:30:45Z",
+    "processedAt": "2024-01-13T12:35:00Z"
+  }
+}

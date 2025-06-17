@@ -1,0 +1,14 @@
+# POST /products 201 application/json
+{
+  "status": "SUCCESS",
+  "message": "Product created successfully.",
+  "data": {
+    "product": {
+      "id": "prod_001",
+      "name": "Wireless Headphones",
+      "category": "Electronics",
+      "price": 99.99,
+      "inStock": true
+    }
+  }
+}

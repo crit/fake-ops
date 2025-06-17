@@ -1,0 +1,30 @@
+# GET /products 200 application/json
+{
+  "status": "SUCCESS",
+  "message": "Products retrieved successfully.",
+  "data": {
+    "products": [
+      {
+        "id": "prod_001",
+        "name": "Wireless Headphones",
+        "category": "Electronics",
+        "price": 99.99,
+        "inStock": true
+      },
+      {
+        "id": "prod_002",
+        "name": "Stainless Steel Water Bottle",
+        "category": "Home and Kitchen",
+        "price": 25.75,
+        "inStock": true
+      },
+      {
+        "id": "prod_003",
+        "name": "Office Chair",
+        "category": "Furniture",
+        "price": 199.50,
+        "inStock": false
+      }
+    ]
+  }
+}

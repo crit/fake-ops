@@ -1,0 +1,13 @@
+# GET /users/:id 200 application/json
+{
+  "status": "SUCCESS",
+  "message": "User found.",
+  "data": {
+    "user": {
+      "id": "1",
+      "name": "Alice Johnson",
+      "email": "alice.johnson@example.com",
+      "role": "admin"
+    }
+  }
+}

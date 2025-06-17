@@ -1,0 +1,13 @@
+# PUT /users/:id 200 application/json
+{
+  "status": "SUCCESS",
+  "message": "User updated.",
+  "data": {
+    "user": {
+      "id": "1",
+      "name": "Alice Johnson",
+      "email": "alice.johnson@example.com",
+      "role": "admin"
+    }
+  }
+}
