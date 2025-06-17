@@ -9,41 +9,54 @@ import (
 )
 
 type ServiceView struct {
-	width    int
-	height   int
-	position map[string]int
-	services []app.ServiceMessage
+	position     map[string]int
+	services     []app.ServiceMessage
+	width        int
+	height       int
+	offlineStyle lipgloss.Style
+	onlineStyle  lipgloss.Style
+	errorStyle   lipgloss.Style
+	gridStyle    lipgloss.Style
 }
 
 func NewServiceView() *ServiceView {
+	blockStyle := lipgloss.NewStyle().
+		Border(lipgloss.RoundedBorder(), true, true, true, true).
+		Width(25).
+		Height(1)
+
 	return &ServiceView{
-		position: make(map[string]int),
+		position:     make(map[string]int),
+		offlineStyle: blockStyle.Foreground(cSecondary).BorderForeground(cOffline),
+		onlineStyle:  blockStyle.Foreground(cOnline).BorderForeground(cOnline),
+		errorStyle:   blockStyle.Foreground(cDanger).BorderForeground(cDanger),
+		gridStyle:    lipgloss.NewStyle().Foreground(cPrimary),
 	}
 }
 
-func (g *ServiceView) Update(msg app.ServiceMessage) {
-	if _, ok := g.position[msg.Name]; ok {
+func (v *ServiceView) Update(msg app.ServiceMessage) {
+	if _, ok := v.position[msg.Name]; ok {
 		return // already in the slice
 	}
 
-	g.services = append(g.services, msg)
+	v.services = append(v.services, msg)
 
-	sort.Slice(g.services, func(i, j int) bool {
-		return g.services[i].Port < g.services[j].Port
+	sort.Slice(v.services, func(i, j int) bool {
+		return v.services[i].Port < v.services[j].Port
 	})
 
-	for i, service := range g.services {
-		g.position[service.Name] = i
+	for i, service := range v.services {
+		v.position[service.Name] = i
 	}
 }
 
-func (g *ServiceView) UpdateStatus(msg app.ServiceStatus) {
-	pos, ok := g.position[msg.Name]
+func (v *ServiceView) UpdateStatus(msg app.ServiceStatus) {
+	pos, ok := v.position[msg.Name]
 	if !ok {
 		return // service not registered
 	}
 
-	service := g.services[pos]
+	service := v.services[pos]
 
 	if msg.Sent.Before(service.LastStatus) {
 		return
@@ -51,39 +64,27 @@ func (g *ServiceView) UpdateStatus(msg app.ServiceStatus) {
 
 	service.Status = msg.Status
 	service.LastStatus = msg.Sent
-	g.services[pos] = service
+	v.services[pos] = service
 }
 
-func (g *ServiceView) Resize(width, height int) {
-	g.width = width
-	g.height = height
+func (v *ServiceView) Resize(width, height int) {
+	v.width = width
+	v.height = height
 }
 
-func (g *ServiceView) View() string {
-	blockStyle := lipgloss.NewStyle().
-		Border(lipgloss.RoundedBorder(), true, true, true, true).
-		Width(25).
-		Height(1)
-
-	offlineStyle := blockStyle.Foreground(cSecondary).BorderForeground(cOffline)
-	onlineStyle := blockStyle.Foreground(cOnline).BorderForeground(cOnline)
-	errorStyle := blockStyle.Foreground(cDanger).BorderForeground(cDanger)
-
-	gridStyle := lipgloss.NewStyle().
-		Foreground(cPrimary).
-		Height(g.height).        // Use dynamic height
-		Width((g.width - 4) / 2) // Use dynamic width
+func (v *ServiceView) View() string {
+	gridStyle := v.gridStyle.Height(v.height).Width(v.width)
 
 	var blocks []string
-	for _, svc := range g.services {
+	for _, svc := range v.services {
 		var block lipgloss.Style
 		switch svc.Status {
 		case "online":
-			block = onlineStyle
+			block = v.onlineStyle
 		case "error":
-			block = errorStyle
+			block = v.errorStyle
 		default:
-			block = offlineStyle
+			block = v.offlineStyle
 		}
 
 		var icon string

@@ -52,8 +52,8 @@ func (ui *UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		ui.width = msg.Width
 		ui.height = msg.Height
-		ui.services.Resize(colw+colw, colh) // TODO: troubleshoot
-		ui.logs.Resize(colw, colh)
+		ui.services.Resize(colw, colh)
+		ui.logs.Resize(colw+colw, colh)
 		return ui, nil
 
 	case app.Message:
