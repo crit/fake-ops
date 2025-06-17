@@ -137,7 +137,6 @@ func StartHTTP(svc Service, ctx *app.Context) {
 				g.PUT(result.Path, handler)
 			default:
 				ctx.PublishServiceError(svc.Name)
-				ctx.PublishServiceError(svc.Name)
 				ctx.PublishError("%s unsupported method: %s", result.Path, result.Method)
 			}
 		}
