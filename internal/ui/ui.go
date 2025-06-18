@@ -17,12 +17,14 @@ func DelayedQuit() tea.Msg {
 }
 
 type UI struct {
-	ctx      *app.Context
-	cancel   func()
-	width    int
-	height   int
-	logs     *LogView
-	services *ServiceView
+	ctx            *app.Context
+	cancel         func()
+	width          int
+	height         int
+	logs           *LogView
+	services       *ServiceView
+	containerStyle lipgloss.Style
+	footerStyle    lipgloss.Style
 }
 
 func (ui *UI) Init() tea.Cmd {
@@ -53,7 +55,7 @@ func (ui *UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		ui.width = msg.Width
 		ui.height = msg.Height
 		ui.services.Resize(colw, colh)
-		ui.logs.Resize(colw+colw, colh)
+		ui.logs.Resize(colw, colh)
 		return ui, nil
 
 	case app.Message:
@@ -74,26 +76,11 @@ func (ui *UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (ui *UI) View() string {
-	var containerStyle = lipgloss.NewStyle().
-		BorderStyle(lipgloss.RoundedBorder()).
-		BorderForeground(cBorder).
-		Padding(1).
-		Width(ui.width - 2).
-		Height(ui.height - 2)
+	container := ui.containerStyle.Width(ui.width - 2).Height(ui.height - 2)
+	row := lipgloss.JoinHorizontal(lipgloss.Top, ui.services.View(), ui.logs.View())
+	footer := ui.footerStyle.Width(ui.width - 4).Render("q or ctrl+c to quit")
 
-	row1 := lipgloss.JoinHorizontal(lipgloss.Top, ui.services.View(), ui.logs.View())
-
-	footer := lipgloss.NewStyle().
-		Foreground(cSecondary).
-		Border(lipgloss.NormalBorder(), true, false, false, false).
-		BorderForeground(cBorder).
-		Width(ui.width - 4).
-		Height(1).
-		Align(lipgloss.Right).
-		Render("q or ctrl+c to quit")
-
-	finalView := lipgloss.JoinVertical(lipgloss.Top, row1, footer)
-	return containerStyle.Render(finalView)
+	return container.Render(lipgloss.JoinVertical(lipgloss.Top, row, footer))
 }
 
 func (ui *UI) SetContext(ctx *app.Context) {
@@ -108,6 +95,18 @@ func New() *UI {
 	var ui UI
 	ui.logs = NewLogView()
 	ui.services = NewServiceView()
+
+	ui.containerStyle = lipgloss.NewStyle().
+		BorderStyle(lipgloss.RoundedBorder()).
+		BorderForeground(cBorder).
+		Padding(1)
+
+	ui.footerStyle = lipgloss.NewStyle().
+		Foreground(cSecondary).
+		Border(lipgloss.NormalBorder(), true, false, false, false).
+		BorderForeground(cBorder).
+		Height(1).
+		Align(lipgloss.Right)
 
 	return &ui
 }
