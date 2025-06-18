@@ -1,17 +1,26 @@
 package app
 
-import "flag"
+import (
+	"flag"
+	"sync"
+)
 
+// Flags contains flagged arguments to this program.
 type Flags struct {
-	Services string `flag:"services" default:"./services" validate:"required"`
-	Results  string `flag:"results" default:"./results" validate:"required"`
+	Services string
+	Results  string
 }
 
+// Parse handles loading flags passed to this program on startup.
 func (f *Flags) Parse() {
-	svc := flag.String("services", "./services", "directory containing service definitions")
-	res := flag.String("results", "./results", "directory containing service results")
-	flag.Parse()
+	var once sync.Once
 
-	f.Services = *svc
-	f.Results = *res
+	once.Do(func() {
+		svc := flag.String("services", "./services", "directory containing service definitions")
+		res := flag.String("results", "./results", "directory containing service results")
+		flag.Parse()
+
+		f.Services = *svc
+		f.Results = *res
+	})
 }

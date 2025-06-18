@@ -8,6 +8,7 @@ import (
 	"github.com/crit/fake-ops/internal/app"
 )
 
+// ServiceView handles creating the services portion of the UI.
 type ServiceView struct {
 	position     map[string]int
 	services     []app.ServiceMessage
@@ -19,6 +20,7 @@ type ServiceView struct {
 	gridStyle    lipgloss.Style
 }
 
+// NewServiceView creates a ServiceView with appropriate defaults.
 func NewServiceView() *ServiceView {
 	blockStyle := lipgloss.NewStyle().
 		Border(lipgloss.RoundedBorder(), true, true, true, true).
@@ -34,6 +36,7 @@ func NewServiceView() *ServiceView {
 	}
 }
 
+// Update ServiceView with data needed for View.
 func (v *ServiceView) Update(msg app.ServiceMessage) {
 	if _, ok := v.position[msg.Name]; ok {
 		return // already in the slice
@@ -50,6 +53,7 @@ func (v *ServiceView) Update(msg app.ServiceMessage) {
 	}
 }
 
+// UpdateStatus handles changes in status based on app.ServiceStatus.
 func (v *ServiceView) UpdateStatus(msg app.ServiceStatus) {
 	pos, ok := v.position[msg.Name]
 	if !ok {
@@ -67,11 +71,13 @@ func (v *ServiceView) UpdateStatus(msg app.ServiceStatus) {
 	v.services[pos] = service
 }
 
+// Resize sets the width/height of the ServiceView.
 func (v *ServiceView) Resize(width, height int) {
 	v.width = width
 	v.height = height
 }
 
+// View combines all of ServiceView's data into a string used by the parent View.
 func (v *ServiceView) View() string {
 	gridStyle := v.gridStyle.Height(v.height).Width(v.width)
 

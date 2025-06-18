@@ -15,6 +15,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// StartHTTP creates a new HTTP server and manages it's lifecycle.
 func StartHTTP(svc Service, ctx *app.Context) {
 	if svc.Skip {
 		ctx.PublishInfo("skipping %s", svc.Name)

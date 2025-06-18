@@ -12,17 +12,23 @@ import (
 
 // ./main --services=./services --results=./results
 func main() {
+	// silence gin's debug messages
 	gin.SetMode(gin.ReleaseMode)
 
+	// create the model and program
 	model := ui.New()
 	p := tea.NewProgram(model)
 
+	// create the context and register its parts with the model
+	// for use by the program.
 	ctx, cancel := app.NewContext(p.Send)
 	model.SetContext(ctx)
 	model.SetCancel(cancel)
 
+	// background all services
 	go startServices(ctx)
 
+	// Run blocks until some service or the UI calls the cancel function.
 	if _, err := p.Run(); err != nil {
 		fmt.Println(err)
 	}
@@ -42,6 +48,4 @@ func startServices(ctx *app.Context) {
 			ctx.PublishError("failed to start service %s: %s", service.Name, err)
 		}
 	}
-
-	<-ctx.Done()
 }

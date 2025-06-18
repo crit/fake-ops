@@ -12,12 +12,13 @@ import (
 	"github.com/crit/fake-ops/internal/app"
 )
 
+// StartApp executes a service and manages it's lifecycle.
 func StartApp(svc Service, ctx *app.Context) {
 	if svc.Skip {
 		ctx.PublishInfo("skipping %s", svc.Name)
 		return
 	}
-	
+
 	ctx.PublishInfo("starting service %s:%d", svc.Name, svc.Port)
 	svc.Exec = strings.ReplaceAll(svc.Exec, "{port}", fmt.Sprintf("%d", svc.Port))
 
@@ -26,12 +27,12 @@ func StartApp(svc Service, ctx *app.Context) {
 
 	if svc.Stdout {
 		pipe, _ := e.StdoutPipe()
-		go capture(pipe, svc, ctx.PublishInfo)
+		go capture(pipe, svc, ctx.PublishInfo, nil)
 	}
 
 	if svc.Stderr {
 		pipe, _ := e.StderrPipe()
-		go capture(pipe, svc, ctx.PublishError)
+		go capture(pipe, svc, ctx.PublishError, ctx.PublishServiceError)
 	}
 
 	if err := e.Start(); err != nil {
@@ -55,11 +56,14 @@ func StartApp(svc Service, ctx *app.Context) {
 	}(ctx)
 }
 
-func capture(r io.ReadCloser, svc Service, publish func(msg string, args ...any)) {
+func capture(r io.ReadCloser, svc Service, publish func(msg string, args ...any), errStatus func(name string)) {
 	scanner := bufio.NewScanner(r)
 	for scanner.Scan() {
 		line := scanner.Text()
 		publish("%s: %s", svc.Name, line)
+		if errStatus != nil {
+			errStatus(svc.Name)
+		}
 	}
 
 	if err := scanner.Err(); err != nil {

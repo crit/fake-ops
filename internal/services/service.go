@@ -17,6 +17,7 @@ const (
 	ServiceApp  Type = "app"
 )
 
+// Service is parsed from a service yaml file.
 type Service struct {
 	Skip   bool   `yaml:"skip"`
 	Name   string `yaml:"name"`
@@ -30,6 +31,7 @@ type Service struct {
 	Responses []*http_results.Result
 }
 
+// NewService takes in the content of a service yaml file and creates a Service.
 func NewService(data []byte) (*Service, error) {
 	var service Service
 
@@ -41,6 +43,7 @@ func NewService(data []byte) (*Service, error) {
 	return &service, nil
 }
 
+// Run backgrounds an appropriate routine based on the Service type.
 func Run(ctx *app.Context, service Service) error {
 	switch service.Type {
 	case ServiceHTTP:
@@ -56,6 +59,7 @@ func Run(ctx *app.Context, service Service) error {
 	return nil
 }
 
+// List uses app.Context's flags to list all services in the service directory.
 func List(ctx *app.Context) ([]Service, error) {
 	path := ctx.Flags.Services
 

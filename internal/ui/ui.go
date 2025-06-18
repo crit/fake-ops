@@ -11,11 +11,14 @@ import (
 
 type QuitSignal struct{}
 
+// DelayedQuit delays the QuitSignal so that any UI updates can
+// happen before the binary is stopped.
 func DelayedQuit() tea.Msg {
 	time.Sleep(1 * time.Second)
 	return QuitSignal{}
 }
 
+// UI handles creating all parts of the user interface.
 type UI struct {
 	ctx            *app.Context
 	cancel         func()
@@ -27,6 +30,7 @@ type UI struct {
 	footerStyle    lipgloss.Style
 }
 
+// Init handles startup items.
 func (ui *UI) Init() tea.Cmd {
 	return func() tea.Msg {
 		// Clear the terminal screen
@@ -35,6 +39,7 @@ func (ui *UI) Init() tea.Cmd {
 	}
 }
 
+// Update UI with data needed by View.
 func (ui *UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
@@ -75,6 +80,7 @@ func (ui *UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 }
 
+// View combines all of UI's data into a string for display.
 func (ui *UI) View() string {
 	container := ui.containerStyle.Width(ui.width - 2).Height(ui.height - 2)
 	row := lipgloss.JoinHorizontal(lipgloss.Top, ui.services.View(), ui.logs.View())
@@ -83,14 +89,17 @@ func (ui *UI) View() string {
 	return container.Render(lipgloss.JoinVertical(lipgloss.Top, row, footer))
 }
 
+// SetContext makes the app.Context available to the UI.
 func (ui *UI) SetContext(ctx *app.Context) {
 	ui.ctx = ctx
 }
 
+// SetCancel makes the context.Context cancel function available to the UI.
 func (ui *UI) SetCancel(cancel func()) {
 	ui.cancel = cancel
 }
 
+// New creates the UI with appropriate defaults.
 func New() *UI {
 	var ui UI
 	ui.logs = NewLogView()

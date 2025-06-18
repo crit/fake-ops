@@ -8,6 +8,7 @@ import (
 	"strings"
 )
 
+// Result is parsed from a http response file.
 type Result struct {
 	Code        int
 	Method      string
@@ -16,6 +17,7 @@ type Result struct {
 	Data        []byte
 }
 
+// Parse takes in the content of a response file and creates a Result.
 func Parse(data []byte) (*Result, error) {
 	var result Result
 
